@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payphone UI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="payphone-container">
+        <div id="call-status" class="ui-container">
+            <div class="header">
+                <div class="header-left">
+                    <div class="header-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <div class="header-title" data-locale="payphone">PAYPHONE</div>
+                </div>
+                <div id="call-status-badge" class="call-status-badge status-calling">
+                    <i class="fas fa-phone-volume"></i>
+                    <span id="call-status-text" data-locale="calling">Calling...</span>
+                </div>
+            </div>
+            <div class="content">
+                <div class="status-card">
+                    <div class="status-row">
+                        <div class="status-label" data-locale="number">Number</div>
+                        <div id="phone-number" class="status-value">000-000</div>
+                    </div>
+                </div>
+                
+                <div class="timer-display">
+                    <div id="call-timer" class="timer-value">00:00</div>
+                    <div class="timer-label" data-locale="call_duration">Call Duration</div>
+                </div>
+                
+                <div id="payment-display" class="payment-info" style="display: none;">
+                    <i class="fas fa-coins payment-icon"></i>
+                    <div class="payment-text">
+                        <span data-locale="next_payment">Next payment:</span> 
+                        <span id="next-payment">30</span> 
+                        <span>seconds</span>
+                      </div>
+                  </div>
+            </div>
+            <div class="footer">
+                <div class="key-hint"><i class="fas fa-keyboard"></i> <span data-locale="end_call_key">Press [BACKSPACE] to end call</span></div>
+            </div>
+        </div>
+
+        <div id="input-dialog" class="ui-container">
+            <div class="header">
+                <div class="header-left">
+                    <div class="header-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <div class="header-title" data-locale="payphone">PAYPHONE</div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="call-cost-notice">
+                    <i class="fas fa-info-circle"></i>
+                    <span data-locale="call_cost_notice">Each call will cost %s$.</span>
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="phone-input" data-locale="enter_number">Enter Number</label>
+                        <input type="text" id="phone-input" placeholder="000-000" maxlength="55">
+                    </div>
+                    <div class="input-group">
+                        <label for="contact-select" data-locale="contacts">Contacts</label>
+                        <div class="contacts-container">
+                            <select id="contact-select" size="5">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="quick-dial-section">
+                        <div class="quick-dial-title" data-locale="quick_dial">Quick Dial</div>
+                        <div class="quick-dial-buttons">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <button id="cancel-btn" class="btn btn-secondary">
+                    <i class="fas fa-times btn-icon"></i>
+                    <span data-locale="cancel">Cancel</span>
+                </button>
+                <button id="call-btn" class="btn btn-primary">
+                    <i class="fas fa-phone-alt btn-icon"></i>
+                    <span data-locale="call">Call (%s$)</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="notification" class="notification">
+            <div class="notification-header">
+                <i class="fas fa-bell"></i>
+                <span data-locale="payphone">Payphone</span>
+            </div>
+            <div class="notification-content" id="notification-message">
+                Notification message here
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
