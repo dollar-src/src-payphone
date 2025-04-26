@@ -1,0 +1,597 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", "Roboto", sans-serif;
+}
+
+:root {
+  --bg-dark: #121212;
+  --bg-card: #1e1e1e;
+  --bg-card-hover: #252525;
+  --accent-blue: #0a84ff;
+  --accent-blue-hover: #0070e0;
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-tertiary: rgba(255, 255, 255, 0.5);
+  --border-radius: 12px;
+  --success-green: #34c759;
+  --error-red: #ff3b30;
+  --warning-yellow: #ffcc00;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: transparent;
+  font-size: 14px;
+}
+
+#payphone-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+
+.ui-container {
+  background-color: var(--bg-card);
+  border-radius: var(--border-radius);
+  width: 400px;
+  color: var(--text-primary);
+  display: none;
+  pointer-events: auto;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header {
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 16px 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--accent-blue);
+}
+
+.header-title {
+  font-size: 16px;
+  letter-spacing: 0.3px;
+}
+
+.content {
+  padding: 20px;
+  font-size: 14px;
+}
+
+.footer {
+  padding: 16px 20px;
+  background-color: rgba(255, 255, 255, 0.03);
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Call Status Styles */
+.status-card {
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+}
+
+.status-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.status-row:last-child {
+  margin-bottom: 0;
+}
+
+.status-label {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.status-value {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.timer-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.timer-value {
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--accent-blue);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+  min-width: 100px;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(10, 132, 255, 0.3);
+}
+
+.timer-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 5px;
+}
+
+.call-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.status-calling {
+  background-color: rgba(255, 204, 0, 0.15);
+  color: var(--warning-yellow);
+}
+
+.status-connected {
+  background-color: rgba(52, 199, 89, 0.15);
+  color: var(--success-green);
+}
+
+.status-ended {
+  background-color: rgba(255, 59, 48, 0.15);
+  color: var(--error-red);
+}
+
+.payment-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+}
+
+.payment-info:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.payment-icon {
+  color: var(--text-tertiary);
+}
+
+.payment-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.key-hint {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  text-align: center;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* Input Dialog Styles */
+.input-row {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.input-group label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.input-group label i {
+  color: var(--accent-blue);
+  font-size: 12px;
+}
+
+.input-group input,
+.input-group select {
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 15px;
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 15px;
+  outline: none;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  border-color: var(--accent-blue);
+  background-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.2);
+}
+
+.input-group select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%2014%2014%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M7%2010L0%203h14z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  padding-right: 40px;
+}
+
+.input-group select option {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  padding: 10px;
+}
+
+.contacts-container {
+  position: relative;
+  max-height: 200px;
+}
+
+#contact-select {
+  max-height: 200px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-blue) rgba(255, 255, 255, 0.1);
+}
+
+#contact-select::-webkit-scrollbar {
+  width: 6px;
+}
+
+#contact-select::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+#contact-select::-webkit-scrollbar-thumb {
+  background-color: var(--accent-blue);
+  border-radius: 3px;
+}
+
+.contact-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+}
+
+.contact-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--accent-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: white;
+  font-weight: 500;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-name {
+  font-weight: 500;
+}
+
+.contact-number {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Quick Dial Section */
+.quick-dial-section {
+  margin-top: 10px;
+}
+
+.quick-dial-title {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.quick-dial-title:before {
+  content: "";
+  display: block;
+  width: 4px;
+  height: 14px;
+  background-color: var(--accent-blue);
+  border-radius: 2px;
+}
+
+.quick-dial-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.quick-dial-btn {
+  flex: 1;
+  min-width: 80px;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quick-dial-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.quick-dial-btn i {
+  font-size: 16px;
+  color: var(--accent-blue);
+}
+
+.quick-dial-btn span {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  gap: 8px;
+}
+
+.btn-primary {
+  background-color: var(--accent-blue);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-blue-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
+}
+
+.btn-secondary {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.btn-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Notification Styles */
+.notification {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 320px;
+  background-color: var(--bg-card);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  transform: translateX(350px);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  pointer-events: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  opacity: 0;
+}
+
+.notification.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.notification-header {
+  padding: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.notification-content {
+  padding: 15px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* Success notification */
+.notification.success .notification-header {
+  color: var(--success-green);
+}
+
+.notification.success {
+  border-left: 4px solid var(--success-green);
+}
+
+/* Error notification */
+.notification.error .notification-header {
+  color: var(--error-red);
+}
+
+.notification.error {
+  border-left: 4px solid var(--error-red);
+}
+
+/* Info notification */
+.notification.info .notification-header {
+  color: var(--accent-blue);
+}
+
+.notification.info {
+  border-left: 4px solid var(--accent-blue);
+}
+
+/* Animations */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.pulse {
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 500px) {
+  .ui-container {
+    width: 90%;
+    max-width: 400px;
+  }
+
+  .quick-dial-buttons {
+    flex-direction: column;
+  }
+
+  .quick-dial-btn {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+}
+
+.call-cost-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+  padding: 10px 12px;
+  background-color: rgba(255, 204, 0, 0.1);
+  border: 1px solid rgba(255, 204, 0, 0.3);
+  border-radius: 8px;
+  color: var(--warning-yellow);
+  font-size: 13px;
+}
+
+.call-cost-notice i {
+  font-size: 14px;
+}
+
+/* Make sure the button shows the cost */
+.btn-primary .cost-indicator {
+  opacity: 0.8;
+  font-size: 12px;
+  margin-left: 4px;
+}
