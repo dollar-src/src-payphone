@@ -112,7 +112,32 @@ Config.Locales = {
         ['service_not_found'] = 'Servis bulunamadı',
         ['service_calling'] = '%s aranıyor...',
         ['enter_valid_number'] = 'Lütfen bir numara girin'
-    }
+    },
+    ['es'] = {
+        ['payphone'] = 'TELÉFONO PÚBLICO',
+        ['calling'] = 'Llamando...',
+        ['connected'] = 'Conectado',
+        ['ended'] = 'Finalizado',
+        ['number'] = 'Número',
+        ['call_duration'] = 'Duración de la llamada',
+        ['next_payment'] = 'Próximo pago: en %s segundos',
+        ['end_call_key'] = 'Presiona [BACKSPACE] para finalizar la llamada',
+        ['enter_number'] = 'Ingresa el número',
+        ['contacts'] = 'Contactos',
+        ['quick_dial'] = 'Marcación rápida',
+        ['cancel'] = 'Cancelar',
+        ['call'] = 'Llamar (%s$)',
+        ['call_cost_notice'] = 'Cada llamada costará %s$',
+        
+        ['phone_unavailable'] = 'El teléfono no está disponible en este momento',
+        ['not_enough_money'] = 'No tienes suficiente dinero. Se requieren %s$',
+        ['payment_success'] = 'Se pagaron %s$. La llamada continúa',
+        ['payment_failed'] = 'No hay suficiente dinero. Finalizando llamada',
+        ['call_ended'] = 'Llamada finalizada',
+        ['service_not_found'] = 'Servicio no encontrado',
+        ['service_calling'] = 'Llamando a %s...',
+        ['enter_valid_number'] = 'Por favor ingresa un número válido'
+    },
 }
 
 -- Phone Integration Functions
