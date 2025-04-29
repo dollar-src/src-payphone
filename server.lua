@@ -6,6 +6,8 @@ local ESX = nil
 Citizen.CreateThread(function()
     if Config.Framework == "esx" then
         TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+    elseif Config.Framework == "esxnew" then
+        ESX = exports["es_extended"]:getSharedObject()
     elseif Config.Framework == "qbcore" then
         QBCore = exports['qb-core']:GetCoreObject()
     end
@@ -44,7 +46,7 @@ RegisterNetEvent('src-payphone:removeMoney')
 AddEventHandler('src-payphone:removeMoney', function(amount, framework)
     local src = source
     
-    if framework == "esx" then
+    if framework == "esx" or "esxnew" then
         if ESX then
             local xPlayer = ESX.GetPlayerFromId(src)
             if xPlayer then
