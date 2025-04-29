@@ -1,7 +1,7 @@
 Config = {}
 
 -- Framework Settings
-Config.Framework = "qbcore" -- Options: "qbcore", "esx", "standalone"
+Config.Framework = "qbcore" -- Options: "qbcore", "esx", "standalone", "esxnew"
 Config.Target = "ox_target" -- Options: "ox_target", "qb-target"
 
 -- Call settings

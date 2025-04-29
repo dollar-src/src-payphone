@@ -46,7 +46,7 @@ RegisterNetEvent('src-payphone:removeMoney')
 AddEventHandler('src-payphone:removeMoney', function(amount, framework)
     local src = source
     
-    if framework == "esx" then
+    if framework == "esx" or "esxnew" then
         if ESX then
             local xPlayer = ESX.GetPlayerFromId(src)
             if xPlayer then
