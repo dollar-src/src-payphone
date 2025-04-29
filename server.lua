@@ -6,6 +6,8 @@ local ESX = nil
 Citizen.CreateThread(function()
     if Config.Framework == "esx" then
         TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+    elseif Config.Framework == "esxnew" then
+        ESX = exports["es_extended"]:getSharedObject()
     elseif Config.Framework == "qbcore" then
         QBCore = exports['qb-core']:GetCoreObject()
     end
