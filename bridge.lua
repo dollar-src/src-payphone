@@ -8,6 +8,10 @@ Citizen.CreateThread(function()
             Citizen.Wait(0)
         end
         print("[src-payphone] ESX Framework initialized")
+    elseif Config.Framework == "esxnew" then
+        ESX = exports["es_extended"]:getSharedObject()
+
+        print("[src-payphone] ESX New Framework initialized")
     elseif Config.Framework == "qbcore" then
         QBCore = exports['qb-core']:GetCoreObject()
         print("[src-payphone] QBCore Framework initialized")
