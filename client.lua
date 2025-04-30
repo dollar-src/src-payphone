@@ -29,13 +29,13 @@ local keybind = lib.addKeybind({
 })
 
 function ResetAllStates()
-    if createdProp then
+    if createdProp and DoesEntityExist(createdProp) then
         DeleteEntity(createdProp)
         createdProp = nil
     end
     
     if entity then
-        SetEntityVisible(entity, true, 0)
+        SetEntityVisible(entity, true, false)
         entity = nil
     end
     
@@ -106,13 +106,13 @@ AddEventHandler('src-payphone:payphoneAvailabilityResult', function(isAvailable,
         return
     end
     
-    if createdProp then
+    if createdProp and DoesEntityExist(createdProp) then
         DeleteEntity(createdProp)
         createdProp = nil
     end
     
     if entity then
-        SetEntityVisible(entity, false, 0)
+        SetEntityVisible(entity, false, false)
     end
     
     local coords = GetEntityCoords(entity)
@@ -340,33 +340,33 @@ RegisterNUICallback('inputSubmit', function(data, cb)
     cb('ok')
 end)
 
-RegisterNUICallback('inputCancel', function(data, cb)
+RegisterNUICallback('inputCancel', function(_, cb)
     HideInputDialog()
     cb('ok')
 end)
 
-RegisterNUICallback('escapePressed', function(data, cb)
+RegisterNUICallback('escapePressed', function(_, cb)
     if uiOpen then
         HideInputDialog()
     end
     cb('ok')
 end)
 
-RegisterNUICallback('backspacePressed', function(data, cb)
+RegisterNUICallback('backspacePressed', function(_, cb)
     if callActive then
         EndCall()
     end
     cb('ok')
 end)
 
-RegisterNUICallback('endCall', function(data, cb)
+RegisterNUICallback('endCall', function(_, cb)
     if callActive then
         EndCall()
     end
     cb('ok')
 end)
 
-RegisterNUICallback('getContacts', function(data, cb)
+RegisterNUICallback('getContacts', function(_, cb)
     FetchPlayerContacts()
     cb('ok')
 end)
