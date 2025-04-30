@@ -70,6 +70,7 @@ lib.callback.register('src-payphone:removeMoney', function(source, amount, frame
             return Player.Functions.RemoveMoney('cash', amount, "payphone-call")
         end
 
+    else
         warn("[src-payphone] Create standalone implementation for removeMoney. Money not removed")
         return true
     end
