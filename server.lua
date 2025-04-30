@@ -149,6 +149,7 @@ AddEventHandler('src-payphone:startCall', function(number, company, payphoneCoor
                             local success = lib.callback.await('src-payphone:requestPayment', src, Config.CallCostPer30Seconds)
                             if not success then
                                 ResetPlayerCallState(src)
+                                break
                             end
                             activeCalls[src].nextPaymentDue = os.time() + Config.CheckPaymentInterval
                             activeCalls[src].timeUntilNextPayment = Config.CheckPaymentInterval

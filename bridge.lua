@@ -57,9 +57,9 @@ Bridge.RemoveMoney = function(amount)
     end
 
     if Config.RemoveMoney == "ox_inventory" then
-        return lib.callback.await('src-payphone:removeMoney', amount, "ox_inventory")
+        return lib.callback.await('src-payphone:removeMoney', false, amount, "ox_inventory")
     else
-        return lib.callback.await('src-payphone:removeMoney', amount, Config.Framework)
+        return lib.callback.await('src-payphone:removeMoney', false, amount, Config.Framework)
     end
 end
 
