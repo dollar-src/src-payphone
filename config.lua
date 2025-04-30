@@ -199,7 +199,7 @@ Config.PhoneIntegration = {
             requirePhone = false,
             hideNumber = false
         }
-        print(company)
+
         if company then
             options.company = company
         end
