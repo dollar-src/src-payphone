@@ -16,6 +16,18 @@ lib.onCache("ped", function(newPed)
     ped = newPed
 end)
 
+local keybind = lib.addKeybind({
+    name = 'endPayphoneCall',
+    description = 'End payphone call',
+    defaultKey = 'BACK',
+    disabled = true,
+    onPressed = function()
+        if callActive and not isEndingCall then
+            EndCall()
+        end
+    end
+})
+
 function ResetAllStates()
     if createdProp then
         DeleteEntity(createdProp)
@@ -29,6 +41,7 @@ function ResetAllStates()
     
     heading = 0
     callActive = false
+    keybind:disable(true)
     callTimer = 0
     targetNumber = nil
     isEndingCall = false
@@ -128,6 +141,7 @@ AddEventHandler('src-payphone:payphoneAvailabilityResult', function(isAvailable,
     })
     
     callActive = true
+    keybind:disable(false)
     callTimer = 0
     isEndingCall = false
     lastServerCheck = GetGameTimer()
@@ -388,19 +402,6 @@ RegisterNUICallback('callCompany', function(data, cb)
         end
     end
     cb('ok')
-end)
-
-Citizen.CreateThread(function()
-    while true do
-        if callActive and not isEndingCall then
-            Citizen.Wait(0)
-            if IsControlJustPressed(0, 194) then -- BACKSPACE
-                EndCall()
-            end
-        else
-            Citizen.Wait(500)
-        end
-    end
 end)
 
 AddEventHandler('onResourceStop', function(resourceName)
