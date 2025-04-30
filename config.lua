@@ -3,6 +3,7 @@ Config = {}
 -- Framework Settings
 Config.Framework = "qbcore" -- Options: "qbcore", "esx", "standalone", "esxnew", "qbox" -> IMPORTANT: QBOX requires uncommenting line in fxmanifest.lua
 Config.Target = "ox_target" -- Options: "ox_target", "qb-target"
+Config.RemoveMoney = "framework" -- Options: "framework", "ox_inventory"
 
 -- Call settings
 Config.CallCostPer30Seconds = 25 -- Cost in dollars per 30 seconds

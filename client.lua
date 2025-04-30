@@ -226,15 +226,14 @@ AddEventHandler('src-payphone:callEnded', function()
     end
 end)
 
-RegisterNetEvent('src-payphone:requestPayment')
-AddEventHandler('src-payphone:requestPayment', function(amount)
+lib.callback.register('src-payphone:requestPayment', function(amount)
     if Bridge.HasEnoughMoney(amount) then
-        TriggerServerEvent('src-payphone:paymentResponse', true)
         Bridge.RemoveMoney(amount)
         Bridge.Notify(_('payment_success', amount), 'success')
+        return true
     else
-        TriggerServerEvent('src-payphone:paymentResponse', false)
         Bridge.Notify(_('payment_failed'), 'error')
+        return false
     end
 end)
 

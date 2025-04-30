@@ -42,29 +42,36 @@ function GetPlayerPhoneNumber(src)
     return playerNumber
 end
 
-RegisterNetEvent('src-payphone:removeMoney')
-AddEventHandler('src-payphone:removeMoney', function(amount, framework)
-    local src = source
-    
-    if framework == "esx" or framework == "esxnew" then
+
+lib.callback.register('src-payphone:removeMoney', function(source, amount, framework)
+    if framework == "ox_inventory" then
+        return exports.ox_inventory:RemoveItem(source, "cash", amount)
+
+    elseif framework == "esx" or framework == "esxnew" then
         if ESX then
-            local xPlayer = ESX.GetPlayerFromId(src)
+            local xPlayer = ESX.GetPlayerFromId(source)
             if xPlayer then
                 xPlayer.removeMoney(amount)
+                return true --removeMoney in esx dont return anything
             end
         end
+
     elseif framework == "qbcore" then
         if QBCore then
-            local Player = QBCore.Functions.GetPlayer(src)
+            local Player = QBCore.Functions.GetPlayer(source)
             if Player then
-                Player.Functions.RemoveMoney('cash', amount, "payphone-call")
+                return Player.Functions.RemoveMoney('cash', amount, "payphone-call")
             end
         end
+
     elseif framework == "qbox" then
         local Player = exports.qbx_core:GetPlayer(source)
         if Player then
             return Player.Functions.RemoveMoney('cash', amount, "payphone-call")
         end
+
+        warn("[src-payphone] Create standalone implementation for removeMoney. Money not removed")
+        return true
     end
 end)
 
@@ -135,7 +142,10 @@ AddEventHandler('src-payphone:startCall', function(number, company, payphoneCoor
                         activeCalls[src].timeUntilNextPayment = activeCalls[src].nextPaymentDue - os.time()
                         
                         if activeCalls[src].timeUntilNextPayment <= 0 then
-                            TriggerClientEvent('src-payphone:requestPayment', src, Config.CallCostPer30Seconds)
+                            local success = lib.callback.await('src-payphone:requestPayment', src, Config.CallCostPer30Seconds)
+                            if not success then
+                                ResetPlayerCallState(src)
+                            end
                             activeCalls[src].nextPaymentDue = os.time() + Config.CheckPaymentInterval
                             activeCalls[src].timeUntilNextPayment = Config.CheckPaymentInterval
                         end
@@ -168,15 +178,6 @@ AddEventHandler('src-payphone:checkCallStatus', function()
     TriggerClientEvent('src-payphone:callStatusCheck', src, inCall)
     
     if not inCall and activeCalls[src] then
-        ResetPlayerCallState(src)
-    end
-end)
-
-RegisterNetEvent('src-payphone:paymentResponse')
-AddEventHandler('src-payphone:paymentResponse', function(success)
-    local src = source
-    
-    if not success then
         ResetPlayerCallState(src)
     end
 end)
