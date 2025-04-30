@@ -9,6 +9,12 @@ local uiOpen = false
 local isPhoneAvailable = true
 local lastServerCheck = 0
 local currentPayphoneCoords = nil
+local ped = cache.ped
+
+---@param newPed number - update cached ped if needed
+lib.onCache("ped", function(newPed)
+    ped = newPed
+end)
 
 function ResetAllStates()
     if createdProp then
@@ -32,7 +38,7 @@ function ResetAllStates()
     HideInputDialog()
     uiOpen = false
     
-    ClearPedTasks(PlayerPedId())
+    ClearPedTasks(ped)
     
     Citizen.SetTimeout(2000, function()
         isPhoneAvailable = true
@@ -105,8 +111,8 @@ AddEventHandler('src-payphone:payphoneAvailabilityResult', function(isAvailable,
     heading = GetEntityHeading(entity)
     
     local offset = GetOffsetFromEntityInWorldCoords(entity, -0.10, -0.85, 0.0)
-    SetEntityCoords(PlayerPedId(), offset.x, offset.y, offset.z, false, false, false, false)
-    SetEntityHeading(PlayerPedId(), heading)
+    SetEntityCoords(ped, offset.x, offset.y, offset.z, false, false, false, false)
+    SetEntityHeading(ped, heading)
     
     StartPhoneAnimation()
     
@@ -136,8 +142,6 @@ AddEventHandler('src-payphone:payphoneAvailabilityResult', function(isAvailable,
 end)
 
 function StartPhoneAnimation()
-    local ped = PlayerPedId()
-    
     RequestAnimDict(Config.AnimDict)
     while not HasAnimDictLoaded(Config.AnimDict) do
         Wait(10)
@@ -158,8 +162,6 @@ function EndCall()
     SendNUIMessage({
         action = 'callEnded'
     })
-    
-    local ped = PlayerPedId()
     
     RequestAnimDict(Config.AnimDict)
     while not HasAnimDictLoaded(Config.AnimDict) do
