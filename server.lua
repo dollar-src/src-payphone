@@ -60,6 +60,11 @@ AddEventHandler('src-payphone:removeMoney', function(amount, framework)
                 Player.Functions.RemoveMoney('cash', amount, "payphone-call")
             end
         end
+    elseif framework == "qbox" then
+        local Player = exports.qbx_core:GetPlayer(source)
+        if Player then
+            return Player.Functions.RemoveMoney('cash', amount, "payphone-call")
+        end
     end
 end)
 

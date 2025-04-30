@@ -12,6 +12,7 @@ shared_scripts {
 }
 
 client_scripts {
+    --'@qbx_core/modules/playerdata.lua',  -- QBox only
     'bridge.lua',
     'client.lua'
 }
