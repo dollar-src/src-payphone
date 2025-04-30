@@ -42,12 +42,15 @@ function GetPlayerPhoneNumber(src)
     return playerNumber
 end
 
-
-lib.callback.register('src-payphone:removeMoney', function(source, amount, framework)
-    if framework == "ox_inventory" then
+---@param source number         - player id
+---@param amount number         - amount of money to remove
+---@param removeHandler string  - handler to remove money
+---@return boolean              - if money was removed
+lib.callback.register('src-payphone:removeMoney', function(source, amount, removeHandler)
+    if removeHandler == "ox_inventory" then
         return exports.ox_inventory:RemoveItem(source, "cash", amount)
 
-    elseif framework == "esx" or framework == "esxnew" then
+    elseif removeHandler == "esx" or removeHandler == "esxnew" then
         if ESX then
             local xPlayer = ESX.GetPlayerFromId(source)
             if xPlayer then
@@ -56,7 +59,7 @@ lib.callback.register('src-payphone:removeMoney', function(source, amount, frame
             end
         end
 
-    elseif framework == "qbcore" then
+    elseif removeHandler == "qbcore" then
         if QBCore then
             local Player = QBCore.Functions.GetPlayer(source)
             if Player then
@@ -64,7 +67,7 @@ lib.callback.register('src-payphone:removeMoney', function(source, amount, frame
             end
         end
 
-    elseif framework == "qbox" then
+    elseif removeHandler == "qbox" then
         local Player = exports.qbx_core:GetPlayer(source)
         if Player then
             return Player.Functions.RemoveMoney('cash', amount, "payphone-call")

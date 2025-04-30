@@ -226,6 +226,8 @@ AddEventHandler('src-payphone:callEnded', function()
     end
 end)
 
+---@param amount number         - amount of money to remove
+---@return boolean              - if player has enough money
 lib.callback.register('src-payphone:requestPayment', function(amount)
     if Bridge.HasEnoughMoney(amount) then
         Bridge.RemoveMoney(amount)
