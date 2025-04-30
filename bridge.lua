@@ -27,7 +27,7 @@ Bridge.HasEnoughMoney = function(amount)
         return true 
     end
     
-    if Config.Framework == "esx" or "esxnew" then
+    if Config.Framework == "esx" or Config.Framework == "esxnew" then
 
         local xPlayer = ESX.GetPlayerData()
         return xPlayer.money >= amount
@@ -47,7 +47,7 @@ Bridge.RemoveMoney = function(amount)
         return true
     end
     
-    if Config.Framework == "esx" or "esxnew" then
+    if Config.Framework == "esx" or Config.Framework == "esxnew" then
         TriggerServerEvent('src-payphone:removeMoney', amount, 'esx')
         return true
     elseif Config.Framework == "qbcore" then
@@ -60,7 +60,7 @@ Bridge.RemoveMoney = function(amount)
 end
 
 Bridge.Notify = function(message, type)
-    if Config.Framework == "esx" or "esxnew" then
+    if Config.Framework == "esx" or Config.Framework == "esxnew" then
         ESX.ShowNotification(message)
     elseif Config.Framework == "qbcore" then
         QBCore.Functions.Notify(message, type)
