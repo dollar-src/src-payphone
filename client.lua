@@ -156,10 +156,7 @@ AddEventHandler('src-payphone:payphoneAvailabilityResult', function(isAvailable,
 end)
 
 function StartPhoneAnimation()
-    RequestAnimDict(Config.AnimDict)
-    while not HasAnimDictLoaded(Config.AnimDict) do
-        Wait(10)
-    end
+    lib.requestAnimDict(Config.AnimDict)
     
     PlayEntityAnim(createdProp, "fxfr_pcn_1_intro_phone", Config.AnimDict, 10.0, true, true, true, 0.0, false)
     TaskPlayAnim(ped, Config.AnimDict, "fxfr_phl_1_intro_male", 8.0, 8.0, -1, 14, 0, false, false, false)
@@ -176,11 +173,8 @@ function EndCall()
     SendNUIMessage({
         action = 'callEnded'
     })
-    
-    RequestAnimDict(Config.AnimDict)
-    while not HasAnimDictLoaded(Config.AnimDict) do
-        Wait(10)
-    end
+
+    lib.requestAnimDict(Config.AnimDict)
     
     TaskPlayAnim(ped, Config.AnimDict, "exit_left_male", 8.0, 8.0, -1, 1, 0, false, false, false)
     Wait(200)
