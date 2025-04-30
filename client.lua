@@ -192,7 +192,12 @@ function EndCall()
 end
 
 function FetchPlayerContacts()
-    TriggerServerEvent('src-payphone:getContacts')
+    local contacts = lib.callback.await('src-payphone:getContacts', false)
+
+    SendNUIMessage({
+        action = 'setContacts',
+        contacts = contacts or {}
+    })
 end
 
 RegisterNetEvent('src-payphone:callStatus')
@@ -249,14 +254,6 @@ lib.callback.register('src-payphone:requestPayment', function(amount)
     end
 end)
 
-RegisterNetEvent('src-payphone:receiveContacts')
-AddEventHandler('src-payphone:receiveContacts', function(contactList)
-    SendNUIMessage({
-        action = 'setContacts',
-        contacts = contactList
-    })
-end)
-
 RegisterNetEvent('src-payphone:usePayphone')
 AddEventHandler('src-payphone:usePayphone', function(data)
     if not isPhoneAvailable or callActive or isEndingCall then
@@ -308,7 +305,7 @@ function ShowInputDialog()
         return
     end
     
-    FetchPlayerContacts()
+    --FetchPlayerContacts() -- Is this necessary? NUI calls "getContacts"-callback at the same time as this was called. So it made 2 identical requests to db.
     SendServicesToUI()
     
     SendNUIMessage({

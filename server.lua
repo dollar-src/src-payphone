@@ -196,25 +196,14 @@ function DoesPlayerExist(playerId)
     return GetPlayerPing(playerId) > 0
 end
 
-RegisterNetEvent('src-payphone:getContacts')
-AddEventHandler('src-payphone:getContacts', function()
-    local src = source
+lib.callback.register('src-payphone:getContacts', function(src)
     local playerNumber = GetPlayerPhoneNumber(src)
-    
+
     if not playerNumber or playerNumber == "000-0000" then
-        TriggerClientEvent('src-payphone:receiveContacts', src, {})
-        return
+        return {}
     end
-    
-    MySQL.Async.fetchAll('SELECT * FROM ' .. Config.DatabaseTable.Contacts .. ' WHERE ' .. Config.DatabaseTable.PhoneNumber .. ' = @phone_number ORDER BY favourite DESC, firstname ASC', {
-        ['@phone_number'] = playerNumber
-    }, function(contacts)
-        if contacts and #contacts > 0 then
-            TriggerClientEvent('src-payphone:receiveContacts', src, contacts)
-        else
-            TriggerClientEvent('src-payphone:receiveContacts', src, {})
-        end
-    end)
+
+    return MySQL.query.await('SELECT * FROM ' .. Config.DatabaseTable.Contacts .. ' WHERE ' .. Config.DatabaseTable.PhoneNumber .. ' = ? ORDER BY favourite DESC, firstname ASC', { playerNumber }) or {}
 end)
 
 RegisterNetEvent('src-payphone:forceReset')
