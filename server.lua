@@ -196,6 +196,8 @@ function DoesPlayerExist(playerId)
     return GetPlayerPing(playerId) > 0
 end
 
+---@param src number        - player id
+---@return table            - contacts
 lib.callback.register('src-payphone:getContacts', function(src)
     local playerNumber = GetPlayerPhoneNumber(src)
 
