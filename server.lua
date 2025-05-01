@@ -42,29 +42,40 @@ function GetPlayerPhoneNumber(src)
     return playerNumber
 end
 
-RegisterNetEvent('src-payphone:removeMoney')
-AddEventHandler('src-payphone:removeMoney', function(amount, framework)
-    local src = source
-    
-    if framework == "esx" or framework == "esxnew" then
+---@param source number         - player id
+---@param amount number         - amount of money to remove
+---@param removeHandler string  - handler to remove money
+---@return boolean              - if money was removed
+lib.callback.register('src-payphone:removeMoney', function(source, amount, removeHandler)
+    if removeHandler == "ox_inventory" then
+        return exports.ox_inventory:RemoveItem(source, "cash", amount)
+
+    elseif removeHandler == "esx" or removeHandler == "esxnew" then
         if ESX then
-            local xPlayer = ESX.GetPlayerFromId(src)
+            local xPlayer = ESX.GetPlayerFromId(source)
             if xPlayer then
                 xPlayer.removeMoney(amount)
+                return true --removeMoney in esx dont return anything
             end
         end
-    elseif framework == "qbcore" then
+
+    elseif removeHandler == "qbcore" then
         if QBCore then
-            local Player = QBCore.Functions.GetPlayer(src)
+            local Player = QBCore.Functions.GetPlayer(source)
             if Player then
-                Player.Functions.RemoveMoney('cash', amount, "payphone-call")
+                return Player.Functions.RemoveMoney('cash', amount, "payphone-call")
             end
         end
-    elseif framework == "qbox" then
+
+    elseif removeHandler == "qbox" then
         local Player = exports.qbx_core:GetPlayer(source)
         if Player then
             return Player.Functions.RemoveMoney('cash', amount, "payphone-call")
         end
+
+    else
+        warn("[src-payphone] Create standalone implementation for removeMoney. Money not removed")
+        return true
     end
 end)
 
@@ -135,7 +146,11 @@ AddEventHandler('src-payphone:startCall', function(number, company, payphoneCoor
                         activeCalls[src].timeUntilNextPayment = activeCalls[src].nextPaymentDue - os.time()
                         
                         if activeCalls[src].timeUntilNextPayment <= 0 then
-                            TriggerClientEvent('src-payphone:requestPayment', src, Config.CallCostPer30Seconds)
+                            local success = lib.callback.await('src-payphone:requestPayment', src, Config.CallCostPer30Seconds)
+                            if not success then
+                                ResetPlayerCallState(src)
+                                break
+                            end
                             activeCalls[src].nextPaymentDue = os.time() + Config.CheckPaymentInterval
                             activeCalls[src].timeUntilNextPayment = Config.CheckPaymentInterval
                         end
@@ -172,15 +187,6 @@ AddEventHandler('src-payphone:checkCallStatus', function()
     end
 end)
 
-RegisterNetEvent('src-payphone:paymentResponse')
-AddEventHandler('src-payphone:paymentResponse', function(success)
-    local src = source
-    
-    if not success then
-        ResetPlayerCallState(src)
-    end
-end)
-
 AddEventHandler('playerDropped', function()
     local src = source
     ResetPlayerCallState(src)
@@ -190,25 +196,16 @@ function DoesPlayerExist(playerId)
     return GetPlayerPing(playerId) > 0
 end
 
-RegisterNetEvent('src-payphone:getContacts')
-AddEventHandler('src-payphone:getContacts', function()
-    local src = source
+---@param src number        - player id
+---@return table            - contacts
+lib.callback.register('src-payphone:getContacts', function(src)
     local playerNumber = GetPlayerPhoneNumber(src)
-    
+
     if not playerNumber or playerNumber == "000-0000" then
-        TriggerClientEvent('src-payphone:receiveContacts', src, {})
-        return
+        return {}
     end
-    
-    MySQL.Async.fetchAll('SELECT * FROM ' .. Config.DatabaseTable.Contacts .. ' WHERE ' .. Config.DatabaseTable.PhoneNumber .. ' = @phone_number ORDER BY favourite DESC, firstname ASC', {
-        ['@phone_number'] = playerNumber
-    }, function(contacts)
-        if contacts and #contacts > 0 then
-            TriggerClientEvent('src-payphone:receiveContacts', src, contacts)
-        else
-            TriggerClientEvent('src-payphone:receiveContacts', src, {})
-        end
-    end)
+
+    return MySQL.query.await('SELECT * FROM ' .. Config.DatabaseTable.Contacts .. ' WHERE ' .. Config.DatabaseTable.PhoneNumber .. ' = ? ORDER BY favourite DESC, firstname ASC', { playerNumber }) or {}
 end)
 
 RegisterNetEvent('src-payphone:forceReset')

@@ -3,6 +3,7 @@ Config = {}
 -- Framework Settings
 Config.Framework = "qbcore" -- Options: "qbcore", "esx", "standalone", "esxnew", "qbox" -> IMPORTANT: QBOX requires uncommenting line in fxmanifest.lua
 Config.Target = "ox_target" -- Options: "ox_target", "qb-target"
+Config.RemoveMoney = "framework" -- Options: "framework", "ox_inventory"
 
 -- Call settings
 Config.CallCostPer30Seconds = 25 -- Cost in dollars per 30 seconds
@@ -59,7 +60,7 @@ Config.UISettings = {
 -- Debug Settings
 Config.Debug = false -- Set to true to enable debug messages
 -- Locale settings
-Config.Locale = "en" -- Options: "en", "tr"
+Config.Locale = "en" -- Options: "en", "tr", "es", "no"
 
 -- Localization
 Config.Locales = {
@@ -138,6 +139,31 @@ Config.Locales = {
         ['service_calling'] = 'Llamando a %s...',
         ['enter_valid_number'] = 'Por favor ingresa un número válido'
     },
+    ['no'] = {
+        ['payphone'] = 'TELEFONKIOSK',
+        ['calling'] = 'Ringer..',
+        ['connected'] = 'Tilkoblet',
+        ['ended'] = 'Avsluttet',
+        ['number'] = 'Nummer',
+        ['call_duration'] = 'Samtalelengde',
+        ['next_payment'] = 'Neste betaling: om %s sekunder',
+        ['end_call_key'] = 'Trykk [BACKSPACE] for å avslutte samtale',
+        ['enter_number'] = 'Tast nummer',
+        ['contacts'] = 'Kontakter',
+        ['quick_dial'] = 'Hastig ring',
+        ['cancel'] = 'Avbryt',
+        ['call'] = 'Ring (%skr)',
+        ['call_cost_notice'] = 'Hver samtale koster %skr.',
+        
+        ['phone_unavailable'] = 'Telefonen er ikke tilgjengelig',
+        ['not_enough_money'] = 'Du har ikke nok pengar. %s$ er nødvendig.',
+        ['payment_success'] = '%s$ betalt. Samtalen fortsetter.',
+        ['payment_failed'] = 'Du har ikke nok pengar. Samtalen avsluttes.',
+        ['call_ended'] = 'Samtalen avsluttet',
+        ['service_not_found'] = 'Bedriften finnes ikke',
+        ['service_calling'] = 'Ringer %s...',
+        ['enter_valid_number'] = 'Vennligst tast et gyldig nummer'
+    }
 }
 
 -- Phone Integration Functions
@@ -173,14 +199,14 @@ Config.PhoneIntegration = {
             requirePhone = false,
             hideNumber = false
         }
-        print(company)
+
         if company then
             options.company = company
         end
         
         local success, callId = pcall(function()
             return exports["lb-phone"]:CreateCall({
-                phoneNumber = 'PAYPHONE',
+                phoneNumber = Config.Locales[Config.Locale].payphone,
                 source = src
             }, number, options)
         end)

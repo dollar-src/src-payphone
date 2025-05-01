@@ -9,20 +9,39 @@ local uiOpen = false
 local isPhoneAvailable = true
 local lastServerCheck = 0
 local currentPayphoneCoords = nil
+local ped = cache.ped
+
+---@param newPed number - update cached ped if needed
+lib.onCache("ped", function(newPed)
+    ped = newPed
+end)
+
+local keybind = lib.addKeybind({
+    name = 'endPayphoneCall',
+    description = 'End payphone call',
+    defaultKey = 'BACK',
+    disabled = true,
+    onPressed = function()
+        if callActive and not isEndingCall then
+            EndCall()
+        end
+    end
+})
 
 function ResetAllStates()
-    if createdProp then
+    if createdProp and DoesEntityExist(createdProp) then
         DeleteEntity(createdProp)
         createdProp = nil
     end
     
     if entity then
-        SetEntityVisible(entity, true, 0)
+        SetEntityVisible(entity, true, false)
         entity = nil
     end
     
     heading = 0
     callActive = false
+    keybind:disable(true)
     callTimer = 0
     targetNumber = nil
     isEndingCall = false
@@ -32,7 +51,7 @@ function ResetAllStates()
     HideInputDialog()
     uiOpen = false
     
-    ClearPedTasks(PlayerPedId())
+    ClearPedTasks(ped)
     
     Citizen.SetTimeout(2000, function()
         isPhoneAvailable = true
@@ -87,13 +106,13 @@ AddEventHandler('src-payphone:payphoneAvailabilityResult', function(isAvailable,
         return
     end
     
-    if createdProp then
+    if createdProp and DoesEntityExist(createdProp) then
         DeleteEntity(createdProp)
         createdProp = nil
     end
     
     if entity then
-        SetEntityVisible(entity, false, 0)
+        SetEntityVisible(entity, false, false)
     end
     
     local coords = GetEntityCoords(entity)
@@ -105,8 +124,8 @@ AddEventHandler('src-payphone:payphoneAvailabilityResult', function(isAvailable,
     heading = GetEntityHeading(entity)
     
     local offset = GetOffsetFromEntityInWorldCoords(entity, -0.10, -0.85, 0.0)
-    SetEntityCoords(PlayerPedId(), offset.x, offset.y, offset.z, false, false, false, false)
-    SetEntityHeading(PlayerPedId(), heading)
+    SetEntityCoords(ped, offset.x, offset.y, offset.z, false, false, false, false)
+    SetEntityHeading(ped, heading)
     
     StartPhoneAnimation()
     
@@ -122,6 +141,7 @@ AddEventHandler('src-payphone:payphoneAvailabilityResult', function(isAvailable,
     })
     
     callActive = true
+    keybind:disable(false)
     callTimer = 0
     isEndingCall = false
     lastServerCheck = GetGameTimer()
@@ -136,12 +156,7 @@ AddEventHandler('src-payphone:payphoneAvailabilityResult', function(isAvailable,
 end)
 
 function StartPhoneAnimation()
-    local ped = PlayerPedId()
-    
-    RequestAnimDict(Config.AnimDict)
-    while not HasAnimDictLoaded(Config.AnimDict) do
-        Wait(10)
-    end
+    lib.requestAnimDict(Config.AnimDict)
     
     PlayEntityAnim(createdProp, "fxfr_pcn_1_intro_phone", Config.AnimDict, 10.0, true, true, true, 0.0, false)
     TaskPlayAnim(ped, Config.AnimDict, "fxfr_phl_1_intro_male", 8.0, 8.0, -1, 14, 0, false, false, false)
@@ -158,13 +173,8 @@ function EndCall()
     SendNUIMessage({
         action = 'callEnded'
     })
-    
-    local ped = PlayerPedId()
-    
-    RequestAnimDict(Config.AnimDict)
-    while not HasAnimDictLoaded(Config.AnimDict) do
-        Wait(10)
-    end
+
+    lib.requestAnimDict(Config.AnimDict)
     
     TaskPlayAnim(ped, Config.AnimDict, "exit_left_male", 8.0, 8.0, -1, 1, 0, false, false, false)
     Wait(200)
@@ -182,7 +192,12 @@ function EndCall()
 end
 
 function FetchPlayerContacts()
-    TriggerServerEvent('src-payphone:getContacts')
+    local contacts = lib.callback.await('src-payphone:getContacts', false)
+
+    SendNUIMessage({
+        action = 'setContacts',
+        contacts = contacts or {}
+    })
 end
 
 RegisterNetEvent('src-payphone:callStatus')
@@ -226,24 +241,17 @@ AddEventHandler('src-payphone:callEnded', function()
     end
 end)
 
-RegisterNetEvent('src-payphone:requestPayment')
-AddEventHandler('src-payphone:requestPayment', function(amount)
+---@param amount number         - amount of money to remove
+---@return boolean              - if player has enough money
+lib.callback.register('src-payphone:requestPayment', function(amount)
     if Bridge.HasEnoughMoney(amount) then
-        TriggerServerEvent('src-payphone:paymentResponse', true)
         Bridge.RemoveMoney(amount)
         Bridge.Notify(_('payment_success', amount), 'success')
+        return true
     else
-        TriggerServerEvent('src-payphone:paymentResponse', false)
         Bridge.Notify(_('payment_failed'), 'error')
+        return false
     end
-end)
-
-RegisterNetEvent('src-payphone:receiveContacts')
-AddEventHandler('src-payphone:receiveContacts', function(contactList)
-    SendNUIMessage({
-        action = 'setContacts',
-        contacts = contactList
-    })
 end)
 
 RegisterNetEvent('src-payphone:usePayphone')
@@ -297,7 +305,7 @@ function ShowInputDialog()
         return
     end
     
-    FetchPlayerContacts()
+    --FetchPlayerContacts() -- Is this necessary? NUI calls "getContacts"-callback at the same time as this was called. So it made 2 identical requests to db.
     SendServicesToUI()
     
     SendNUIMessage({
@@ -329,33 +337,33 @@ RegisterNUICallback('inputSubmit', function(data, cb)
     cb('ok')
 end)
 
-RegisterNUICallback('inputCancel', function(data, cb)
+RegisterNUICallback('inputCancel', function(_, cb)
     HideInputDialog()
     cb('ok')
 end)
 
-RegisterNUICallback('escapePressed', function(data, cb)
+RegisterNUICallback('escapePressed', function(_, cb)
     if uiOpen then
         HideInputDialog()
     end
     cb('ok')
 end)
 
-RegisterNUICallback('backspacePressed', function(data, cb)
+RegisterNUICallback('backspacePressed', function(_, cb)
     if callActive then
         EndCall()
     end
     cb('ok')
 end)
 
-RegisterNUICallback('endCall', function(data, cb)
+RegisterNUICallback('endCall', function(_, cb)
     if callActive then
         EndCall()
     end
     cb('ok')
 end)
 
-RegisterNUICallback('getContacts', function(data, cb)
+RegisterNUICallback('getContacts', function(_, cb)
     FetchPlayerContacts()
     cb('ok')
 end)
@@ -385,19 +393,6 @@ RegisterNUICallback('callCompany', function(data, cb)
         end
     end
     cb('ok')
-end)
-
-Citizen.CreateThread(function()
-    while true do
-        if callActive and not isEndingCall then
-            Citizen.Wait(0)
-            if IsControlJustPressed(0, 194) then -- BACKSPACE
-                EndCall()
-            end
-        else
-            Citizen.Wait(500)
-        end
-    end
 end)
 
 AddEventHandler('onResourceStop', function(resourceName)

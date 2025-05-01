@@ -29,20 +29,23 @@ Bridge.HasEnoughMoney = function(amount)
     if Config.Debug then
         return true 
     end
-    
-    if Config.Framework == "esx" or Config.Framework == "esxnew" then
 
+
+    if Config.RemoveMoney == "ox_inventory" then
+        return exports.ox_inventory:GetItemCount("cash") >= amount
+
+    elseif Config.Framework == "esx" or Config.Framework == "esxnew" then
         local xPlayer = ESX.GetPlayerData()
         return xPlayer.money >= amount
-    
+
     elseif Config.Framework == "qbcore" then
         local Player = QBCore.Functions.GetPlayerData()
         return Player.money.cash >= amount
-    
+
     elseif Config.Framework == "qbox" then
         return QBX.PlayerData.money.cash >= amount
     else
-        
+
         return true
     end
 end
@@ -52,19 +55,11 @@ Bridge.RemoveMoney = function(amount)
         print("[src-payphone] Debug mode: Removing money: " .. amount)
         return true
     end
-    
-    if Config.Framework == "esx" or Config.Framework == "esxnew" then
-        TriggerServerEvent('src-payphone:removeMoney', amount, 'esx')
-        return true
-    elseif Config.Framework == "qbcore" then
-        TriggerServerEvent('src-payphone:removeMoney', amount, 'qbcore')
-        return true
-    elseif Config.Framework == "qbox" then
-        TriggerServerEvent('src-payphone:removeMoney', amount, 'qbox')
-        return true
+
+    if Config.RemoveMoney == "ox_inventory" then
+        return lib.callback.await('src-payphone:removeMoney', false, amount, "ox_inventory")
     else
-        TriggerServerEvent('src-payphone:removeMoney', amount, 'standalone')
-        return true
+        return lib.callback.await('src-payphone:removeMoney', false, amount, Config.Framework)
     end
 end
 
