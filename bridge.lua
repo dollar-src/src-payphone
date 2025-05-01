@@ -15,6 +15,9 @@ Citizen.CreateThread(function()
     elseif Config.Framework == "qbcore" then
         QBCore = exports['qb-core']:GetCoreObject()
         print("[src-payphone] QBCore Framework initialized")
+    elseif Config.Framework == "qbox" then
+        if not QBX then return error("^4[src-payphone]^7 ^1QBX not found.^7 ^2Uncomment line in fxmanifest.lua^7") end
+        print("[src-payphone] QBox Framework initialized")
     else
         print("[src-payphone] Standalone mode initialized")
     end
@@ -27,7 +30,7 @@ Bridge.HasEnoughMoney = function(amount)
         return true 
     end
     
-    if Config.Framework == "esx" or "esxnew" then
+    if Config.Framework == "esx" or Config.Framework == "esxnew" then
 
         local xPlayer = ESX.GetPlayerData()
         return xPlayer.money >= amount
@@ -35,6 +38,9 @@ Bridge.HasEnoughMoney = function(amount)
     elseif Config.Framework == "qbcore" then
         local Player = QBCore.Functions.GetPlayerData()
         return Player.money.cash >= amount
+    
+    elseif Config.Framework == "qbox" then
+        return QBX.PlayerData.money.cash >= amount
     else
         
         return true
@@ -47,11 +53,14 @@ Bridge.RemoveMoney = function(amount)
         return true
     end
     
-    if Config.Framework == "esx" or "esxnew" then
+    if Config.Framework == "esx" or Config.Framework == "esxnew" then
         TriggerServerEvent('src-payphone:removeMoney', amount, 'esx')
         return true
     elseif Config.Framework == "qbcore" then
         TriggerServerEvent('src-payphone:removeMoney', amount, 'qbcore')
+        return true
+    elseif Config.Framework == "qbox" then
+        TriggerServerEvent('src-payphone:removeMoney', amount, 'qbox')
         return true
     else
         TriggerServerEvent('src-payphone:removeMoney', amount, 'standalone')
@@ -60,10 +69,12 @@ Bridge.RemoveMoney = function(amount)
 end
 
 Bridge.Notify = function(message, type)
-    if Config.Framework == "esx" or "esxnew" then
+    if Config.Framework == "esx" or Config.Framework == "esxnew" then
         ESX.ShowNotification(message)
     elseif Config.Framework == "qbcore" then
         QBCore.Functions.Notify(message, type)
+    elseif Config.Framework == "qbox" then
+        exports.qbx_core:Notify(message, type)
     else
         lib.notify({
             title = 'Payphone',

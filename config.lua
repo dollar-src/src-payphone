@@ -1,7 +1,7 @@
 Config = {}
 
 -- Framework Settings
-Config.Framework = "qbcore" -- Options: "qbcore", "esx", "standalone", "esxnew"
+Config.Framework = "qbcore" -- Options: "qbcore", "esx", "standalone", "esxnew", "qbox" -> IMPORTANT: QBOX requires uncommenting line in fxmanifest.lua
 Config.Target = "ox_target" -- Options: "ox_target", "qb-target"
 
 -- Call settings

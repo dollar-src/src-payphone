@@ -46,7 +46,7 @@ RegisterNetEvent('src-payphone:removeMoney')
 AddEventHandler('src-payphone:removeMoney', function(amount, framework)
     local src = source
     
-    if framework == "esx" or "esxnew" then
+    if framework == "esx" or framework == "esxnew" then
         if ESX then
             local xPlayer = ESX.GetPlayerFromId(src)
             if xPlayer then
@@ -59,6 +59,11 @@ AddEventHandler('src-payphone:removeMoney', function(amount, framework)
             if Player then
                 Player.Functions.RemoveMoney('cash', amount, "payphone-call")
             end
+        end
+    elseif framework == "qbox" then
+        local Player = exports.qbx_core:GetPlayer(source)
+        if Player then
+            return Player.Functions.RemoveMoney('cash', amount, "payphone-call")
         end
     end
 end)
